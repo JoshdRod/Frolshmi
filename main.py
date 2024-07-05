@@ -1,5 +1,6 @@
 import math
 import numpy as np
+from numpy import asarray
 from PIL import Image
 
 # Freddie ;)
@@ -16,10 +17,15 @@ def CsvToArray():
       data.append(row[1:])
   return sigmalabels, data
 
-def pngToArray():
-  im = Image.open('image.png')
-  na = np.array(im)
-  
+def pngToArray(file):
+  img = Image.open(file)
+  numpydata = asarray(img)
+  numpydata.tolist()
+  pixels_array = []
+  for row in numpydata:
+    for pixel in row:
+      pixels_array.append(sum(pixel)//3)
+  return pixels_array
 
 # JOsh
 def InitialiseParams():
@@ -72,4 +78,5 @@ def main():
   print(len(x))
   print(x)
 
-main()
+#main()
+pngToArray("colours.png")
