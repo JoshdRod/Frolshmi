@@ -69,6 +69,7 @@ def SigmaWeight(fredinputsalpha, fredweightsalpha):
 def ForwardPropagation():
   pass
 
+
 def Train():
   pass
 
