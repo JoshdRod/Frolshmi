@@ -4,18 +4,26 @@ from PIL import Image
 
 # Freddie ;)
 """
-Converts a CSV image file into an array of pixel values
+Converts a CSV of image pixels into an array of pixel values
+INPUTS: CSV File name
+RETURNS: 2d array of all the pixel values for each image [[pixels in img 1], [pixels in img 2], ..]
 """
 def CsvToArray():
   sigmalabels = []
   data = []
-  with open("train.csv", "r") as file:
+  with open("train.csv", "r") as file: # Might be good to make the file name a param, and default it to the "train.csv" (I belive there's a programming principle which involves this idea, but I can't remember it!)
     training_data = file.reader(file)
     for row in data:
       sigmalabels.append(row[0])
       data.append(row[1:])
   return sigmalabels, data
 
+"""
+Converts a PNG (must be 28x28, greyscale) file to an array of pixel values
+INPUTS: PNG File
+RETURNS: 2d array of all the pixel values in the img [pixel0, pixel1, .., pixel783]
+"""
+# Might be good eventually to have the option of either entering either a single png file, or a folder of pngs? lmk what you think
 def pngToArray():
   im = Image.open('image.png')
   na = np.array(im)
