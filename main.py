@@ -1,5 +1,6 @@
 import math
 import numpy as np
+from numpy import asarray
 from PIL import Image
 
 # Freddie ;)
@@ -24,10 +25,15 @@ INPUTS: PNG File
 RETURNS: 2d array of all the pixel values in the img [pixel0, pixel1, .., pixel783]
 """
 # Might be good eventually to have the option of either entering either a single png file, or a folder of pngs? lmk what you think
-def pngToArray():
-  im = Image.open('image.png')
-  na = np.array(im)
-  
+def pngToArray(file):
+  img = Image.open(file)
+  numpydata = asarray(img)
+  numpydata.tolist()
+  pixels_array = []
+  for row in numpydata:
+    for pixel in row:
+      pixels_array.append(sum(pixel)//3)
+  return pixels_array
 
 # JOsh
 def InitialiseParams():
@@ -71,6 +77,7 @@ def SigmaWeight(fredinputsalpha, fredweightsalpha):
 def ForwardPropagation():
   pass
 
+
 def Train():
   pass
 
@@ -80,4 +87,5 @@ def main():
   print(len(x))
   print(x)
 
-main()
+#main()
+pngToArray("colours.png")
