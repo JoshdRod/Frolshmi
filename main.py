@@ -2,6 +2,7 @@ import math
 import numpy as np
 from numpy import asarray
 from PIL import Image
+import random
 
 # Freddie ;)
 """
@@ -73,19 +74,47 @@ def SigmaWeight(fredinputsalpha, fredweightsalpha):
     fredfinal.append(fredconstant1)
     fredconstant1 = 0
   return fredfinal
-   
-def ForwardPropagation():
-  pass
 
+"""
+Creates a n*m list of random nums betweeen 0 and 1, to be used as  weights or a whole layer.
+Used on first forward prop, to initialise weights ready for training
+INPUTS: int number of nodes in previous layer (tells us how many weights there should be going into each node), n
+        int number of nodes in current layer (tells us how many sets of weights we're going to need), m
+RETURNS: n*m list of random nums 0 <-> 1
+"""
+def getRandomWeights(noPreviousLayerNodes: int, noCurrentLayerNodes: int) -> list:
+  return [[random.random() for i in range(noPreviousLayerNodes)] for i in range(noCurrentLayerNodes)] # What's the advantage of using a numpy array here? I feel like there should be one
+
+"""
+Performs singular forward pass through network
+INPUTS: list input pixels, list hidden layer weights, list output layer weights
+RETURNS: int predicted number
+Also stores all values at each step in the network, to be passed into backpropogation
+""" 
+def ForwardPropagation(input: list, hiddenWeights=getRandomWeights(784, 10), outputWeights=getRandomWeights(10, 784)):
+  
+  hiddenWeightedSums = SigmaWeight(input, hiddenWeights)
+  hiddenActivations = map(RELU, hiddenWeightedSums)
+  
+  samples = [(random.randint(0, 10), random.randint(0, 783)) for i in range(3)]
+  for sample in samples:
+    print(f"Input : {input[sample[0]][sample[1]]}")
+    print(f"Weight : {hiddenWeights[sample[0]][sample[1]]}")
+    print(f"Weighted Sum : {hiddenWeightedSums[sample[0]]}")
+    print(f"Activation : {hiddenActivations[sample]}")
+  """
+  ouputWeightedSum
+  ouputActivation
+
+  prediction
+  """
 
 def Train():
   pass
 
 
 def main():
-  x = SigmaWeight([3]*784, [[2]*784]*10)
-  print(len(x))
-  print(x)
+  ForwardPropagation()
 
-#main()
-pngToArray("colours.png")
+main()
+#pngToArray("colours.png")
