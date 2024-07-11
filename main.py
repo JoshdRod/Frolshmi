@@ -45,6 +45,13 @@ def RELU(x):
   return x if x > 0 else 0
 
 # TEmI
+"""
+Performs a softmax operation over each element in a list
+See full explaination of softmax here: https://victorzhou.com/blog/softmax/
+The general concept is, we can find the probability of a value being chosen, even if it's negative, because e^n > 0, even for -ive nums
+INPUTS: list of raw weighted sums for each number
+RETURNS: list, of same size, of probabilities of each number being the one in the image 
+"""
 def SoftMax(weightsum):
   e_weightsum = np.exp(weightsum - np.max(weightsum))
   return e_weightsum / e_weightsum.sum()
@@ -102,12 +109,13 @@ def ForwardPropagation(input: list, hiddenWeights=getRandomWeights(784, 10), out
     print(f"Weight : {hiddenWeights[sample[0]][sample[1]]}")
     print(f"Weighted Sum : {hiddenWeightedSums[sample[0]]}")
     print(f"Activation : {hiddenActivations[sample]}")
-  """
-  ouputWeightedSum
-  ouputActivation
-
-  prediction
-  """
+  
+  # STILL NEED TO TEST THESE
+  ouputWeightedSum = SigmaWeight(input, hiddenWeights)
+  ouputActivation = map(RELU, ouputWeightedSum)
+  
+  prediction = map(SoftMax, ouputActivation)
+  
 
 def Train():
   pass
