@@ -36,9 +36,6 @@ def pngToArray(file):
       pixels_array.append(sum(pixel)//3)
   return pixels_array
 
-# JOsh
-def InitialiseParams():
-  pass
 
 # TEmi
 def RELU(x):
@@ -101,14 +98,15 @@ Also stores all values at each step in the network, to be passed into backpropog
 def ForwardPropagation(input: list, hiddenWeights=getRandomWeights(784, 10), outputWeights=getRandomWeights(10, 784)):
   
   hiddenWeightedSums = SigmaWeight(input, hiddenWeights)
-  hiddenActivations = map(RELU, hiddenWeightedSums)
+  hiddenActivations = list(map(RELU, hiddenWeightedSums))
   
-  samples = [(random.randint(0, 10), random.randint(0, 783)) for i in range(3)]
+  # Test samples of the network
+  samples = [(random.randint(0, 9), random.randint(0, 783)) for i in range(3)]
   for sample in samples:
-    print(f"Input : {input[sample[0]][sample[1]]}")
+    print(f"Input : {input[sample[0]]}")
     print(f"Weight : {hiddenWeights[sample[0]][sample[1]]}")
     print(f"Weighted Sum : {hiddenWeightedSums[sample[0]]}")
-    print(f"Activation : {hiddenActivations[sample]}")
+    print(f"Activation : {hiddenActivations[sample[0]]}")
   
   # STILL NEED TO TEST THESE
   ouputWeightedSum = SigmaWeight(input, hiddenWeights)
@@ -116,13 +114,18 @@ def ForwardPropagation(input: list, hiddenWeights=getRandomWeights(784, 10), out
   
   prediction = map(SoftMax, ouputActivation)
   
+# JOsh
+def InitialiseParams():
+  pass
 
 def Train():
   pass
 
 
 def main():
-  ForwardPropagation()
+  # For now, just create a random list of 784 numbers
+  randomInputs = [random.random() for i in range(784)]
+  ForwardPropagation(randomInputs)
 
 main()
 #pngToArray("colours.png")
