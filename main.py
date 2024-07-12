@@ -3,6 +3,7 @@ import numpy as np
 from numpy import asarray
 from PIL import Image
 import random
+import Tests
 
 # Freddie ;)
 """
@@ -80,14 +81,14 @@ def SigmaWeight(fredinputsalpha, fredweightsalpha):
   return fredfinal
 
 """
-Creates a n*m list of random nums betweeen 0 and 1, to be used as  weights or a whole layer.
+Creates a n*m list of random nums betweeen -1 and 1, to be used as  weights or a whole layer.
 Used on first forward prop, to initialise weights ready for training
 INPUTS: int number of nodes in previous layer (tells us how many weights there should be going into each node), n
         int number of nodes in current layer (tells us how many sets of weights we're going to need), m
 RETURNS: n*m list of random nums 0 <-> 1
 """
 def getRandomWeights(noPreviousLayerNodes: int, noCurrentLayerNodes: int) -> list:
-  return [[random.random() for i in range(noPreviousLayerNodes)] for i in range(noCurrentLayerNodes)] # What's the advantage of using a numpy array here? I feel like there should be one
+  return [[random.uniform(-1, 1) for i in range(noPreviousLayerNodes)] for i in range(noCurrentLayerNodes)] # random.uniform selects a random real number between a and b inclusive
 
 """
 Performs singular forward pass through network
@@ -100,19 +101,12 @@ def ForwardPropagation(input: list, hiddenWeights=getRandomWeights(784, 10), out
   hiddenWeightedSums = SigmaWeight(input, hiddenWeights)
   hiddenActivations = list(map(RELU, hiddenWeightedSums))
   
-  # Test samples of the network
-  samples = [(random.randint(0, 9), random.randint(0, 783)) for i in range(3)]
-  for sample in samples:
-    print(f"Input : {input[sample[0]]}")
-    print(f"Weight : {hiddenWeights[sample[0]][sample[1]]}")
-    print(f"Weighted Sum : {hiddenWeightedSums[sample[0]]}")
-    print(f"Activation : {hiddenActivations[sample[0]]}")
-  
   # STILL NEED TO TEST THESE
   ouputWeightedSum = SigmaWeight(input, hiddenWeights)
-  ouputActivation = map(RELU, ouputWeightedSum)
+  ouputActivation = list(map(RELU, ouputWeightedSum))
   
-  prediction = map(SoftMax, ouputActivation)
+  prediction = list(map(SoftMax, ouputActivation))
+  print(prediction)
   
 # JOsh
 def InitialiseParams():
