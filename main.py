@@ -52,7 +52,7 @@ RETURNS: list, of same size, of probabilities of each number being the one in th
 """
 def SoftMax(weightsum):
   e_weightsum = np.exp(weightsum - np.max(weightsum))
-  return e_weightsum / e_weightsum.sum()
+  return list(e_weightsum / e_weightsum.sum()) 
 
 #scores = [-0.3, 0.5, 7, 1.2]
 #print(SoftMax(scores))
@@ -102,10 +102,12 @@ def ForwardPropagation(input: list, hiddenWeights=getRandomWeights(784, 10), out
   hiddenActivations = list(map(RELU, hiddenWeightedSums))
   
   # STILL NEED TO TEST THESE
-  ouputWeightedSum = SigmaWeight(input, hiddenWeights)
-  ouputActivation = list(map(RELU, ouputWeightedSum))
+  outputWeightedSums = SigmaWeight(input, hiddenWeights)
+  outputActivations = SoftMax(outputWeightedSums)
   
-  prediction = list(map(SoftMax, ouputActivation))
+  prediction = outputActivations.index(max(outputActivations))
+  
+  print(outputActivations)
   print(prediction)
   
 # JOsh
