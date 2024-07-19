@@ -1,3 +1,4 @@
+#Oli(
 import math
 import numpy as np
 from numpy import asarray
@@ -124,4 +125,4 @@ def main():
   ForwardPropagation(randomInputs)
 
 main()
-#pngToArray("colours.png")
+#pngToArray("colours.png")#)
