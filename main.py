@@ -14,7 +14,7 @@ RETURNS: 2d array of all the pixel values for each image [[pixels in img 1], [pi
 def CsvToArray():
   sigmalabels = []
   data = []
-  with open("train.csv", "r") as file: # Might be good to make the file name a param, and default it to the "train.csv" (I belive there's a programming principle which involves this idea, but I can't remember it!)
+  with open("mnist_train.csv", "r") as file: # Might be good to make the file name a param, and default it to the "train.csv" (I belive there's a programming principle which involves this idea, but I can't remember it!)
     training_data = file.reader(file)
     for row in data:
       sigmalabels.append(row[0])
@@ -90,6 +90,7 @@ RETURNS: n*m list of random nums 0 <-> 1
 def getRandomWeights(noPreviousLayerNodes: int, noCurrentLayerNodes: int) -> list:
   return [[random.uniform(-1, 1) for i in range(noPreviousLayerNodes)] for i in range(noCurrentLayerNodes)] # random.uniform selects a random real number between a and b inclusive
 
+# Josh
 """
 Performs singular forward pass through network
 INPUTS: list input pixels, list hidden layer weights, list output layer weights
@@ -120,7 +121,7 @@ def Train():
 
 def main():
   # For now, just create a random list of 784 numbers
-  randomInputs = [random.random() for i in range(784)]
+  #randomInputs = [random.random() for i in range(784)]
   ForwardPropagation(randomInputs)
 
 main()
