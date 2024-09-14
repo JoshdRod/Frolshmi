@@ -4,6 +4,7 @@ from numpy import asarray
 from PIL import Image
 import random
 import Tests
+import csv
 
 # Freddie ;)
 """
@@ -15,8 +16,8 @@ def CsvToArray():
   sigmalabels = []
   data = []
   with open("mnist_train.csv", "r") as file: # Might be good to make the file name a param, and default it to the "train.csv" (I belive there's a programming principle which involves this idea, but I can't remember it!)
-    training_data = file.reader(file)
-    for row in data:
+    training_data = csv.reader(file)
+    for row in training_data:
       sigmalabels.append(row[0])
       data.append(row[1:])
   return sigmalabels, data
@@ -120,9 +121,11 @@ def Train():
 
 
 def main():
+  inputs = CsvToArray()
   # For now, just create a random list of 784 numbers
   #randomInputs = [random.random() for i in range(784)]
-  ForwardPropagation(randomInputs)
+  ForwardPropagation(inputs[1][1])
+  print("Actual:", inputs[0][1])
 
 main()
 #pngToArray("colours.png")
