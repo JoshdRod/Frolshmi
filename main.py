@@ -2,7 +2,9 @@ import math
 import numpy as np
 from numpy import asarray
 from PIL import Image
-import random,csv
+import random
+import Tests
+import csv
 
 # Freddie ;)
 """
@@ -40,18 +42,22 @@ def pngToArray(file):
       pixels_array.append(sum(pixel)//3)
   return pixels_array
 
-# JOsh
-def InitialiseParams():
-  pass
 
 # TEmi
 def RELU(x):
   return x if x > 0 else 0
 
 # TEmI
+"""
+Performs a softmax operation over each element in a list
+See full explaination of softmax here: https://victorzhou.com/blog/softmax/
+The general concept is, we can find the probability of a value being chosen, even if it's negative, because e^n > 0, even for -ive nums
+INPUTS: list of raw weighted sums for each number
+RETURNS: list, of same size, of probabilities of each number being the one in the image 
+"""
 def SoftMax(weightsum):
   e_weightsum = np.exp(weightsum - np.max(weightsum))
-  return e_weightsum / e_weightsum.sum()
+  return list(e_weightsum / e_weightsum.sum()) 
 
 #scores = [-0.3, 0.5, 7, 1.2]
 #print(SoftMax(scores))
@@ -87,8 +93,8 @@ INPUTS: int number of nodes in previous layer (tells us how many weights there s
 RETURNS: n*m list of random nums 0 <-> 1
 """
 def getRandomWeights(noPreviousLayerNodes: int, noCurrentLayerNodes: int) -> list:
-  return [[random.random() for i in range(noPreviousLayerNodes)] for i in range(noCurrentLayerNodes)] # What's the advantage of using a numpy array here? I feel like there should be one
-
+  return [[random.uniform(-1, 1) for i in range(noPreviousLayerNodes)] for i in range(noCurrentLayerNodes)] # random.uniform selects a random real number between a and b inclusive
+# Josh
 """
 Performs singular forward pass through network
 INPUTS: list input pixels, list hidden layer weights, list output layer weights
@@ -98,29 +104,30 @@ Also stores all values at each step in the network, to be passed into backpropog
 def ForwardPropagation(input: list, hiddenWeights=getRandomWeights(784, 10), outputWeights=getRandomWeights(10, 784)):
   
   hiddenWeightedSums = SigmaWeight(input, hiddenWeights)
-  hiddenActivations = map(RELU, hiddenWeightedSums)
+  hiddenActivations = list(map(RELU, hiddenWeightedSums))
   
-  samples = [(random.randint(0, 10), random.randint(0, 783)) for i in range(3)]
-  for sample in samples:
-    print(f"Input : {input[sample[0]][sample[1]]}")
-    print(f"Weight : {hiddenWeights[sample[0]][sample[1]]}")
-    print(f"Weighted Sum : {hiddenWeightedSums[sample[0]]}")
-    print(f"Activation : {hiddenActivations[sample]}")
-  """
-  ouputWeightedSum
-  ouputActivation
-
-  prediction
-  """
+  # STILL NEED TO TEST THESE
+  outputWeightedSums = SigmaWeight(input, hiddenWeights)
+  outputActivations = SoftMax(outputWeightedSums)
+  
+  prediction = outputActivations.index(max(outputActivations))
+  
+  print(outputActivations)
+  print(prediction)
+  
+# JOsh
+def InitialiseParams():
+  pass
 
 def Train():
   pass
 
+def main():
+  inputs = CsvToArray()
+  # For now, just create a random list of 784 numbers
+  #randomInputs = [random.random() for i in range(784)]
+  ForwardPropagation(inputs[1][1])
+  print("Actual:", inputs[0][1])
 
-#def main():
-  #ForwardPropagation()
-
-#main()
+main()
 #pngToArray("colours.png")
-label, data = CsvToArray("mnist_train.csv")
-print(label)
