@@ -51,7 +51,7 @@ class Network:
   # Functionality
   def __init__(self):
     self.layers = [Layer(inputSize=784, layerSize=10),
-                   Layer(inputSize=10, layerSize=10)]
+                   Layer(inputSize=10, layerSize=10, type="output")]
     self.input = CsvToArray()
 
   def ForwardPropogate(self):
@@ -67,7 +67,7 @@ class Network:
 
 class Layer:
   # Data
-  type = ""
+  type = "" # Hidden or output (changes the activation func used)
   backPropConstant = 0 # Placeholder (used in weight update formula)
 
   inputSize = 0 # no. nodes in previous layer
@@ -135,8 +135,8 @@ class Layer:
   RETURNS: list, of same size, of probabilities of each number being the one in the image 
   """
   def __SoftMax__(self):
-    e_weightsum = np.exp(self.weightedSums - np.max(self.weightedSum))
-    return list(e_weightsum / e_weightsum.sum()) 
+    e_weightedSum = np.exp(self.weightedSums - np.max(self.weightedSums))
+    return list(e_weightedSum / e_weightedSum.sum()) 
 
   # Josh
   """
