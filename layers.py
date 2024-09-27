@@ -1,7 +1,10 @@
+from layersController import getRandomWeights
+import numpy as np
+from numpy import asarray
+
 # Defines a Layer (Use HiddenLayer or OutputLayer for backprop functionality)
-class Layer:
+class BaseLayer:
   # Data
-  type = "" # Hidden or output (changes the activation func used)
   backPropConstant = 0 # Placeholder (used in weight update formula)
 
   inputSize = 0 # no. nodes in previous layer
@@ -101,16 +104,21 @@ class Layer:
   def UpdateWeights():
     pass
 
-class HiddenLayer(Layer):
+class HiddenLayer(BaseLayer):
   def __Activation__(self):
       return self.__RELU__()
   
   def BackPropogate(self):
-    return
+    yield NotImplementedError() # TODO!!
   
-class OutputLayer(Layer):
+class OutputLayer(BaseLayer):
   def __Activation__(self):
       return self.__SoftMax__()
   
-  def BackPropogate(self):
-    return
+  def BackPropogate(self, expectedOutput):
+    # Convert expected value to an array of 'probablities'
+    # e.g '4' -> [0,0,0,0,1,0,0,0,0,0]
+    expectedOutputProbs = [0 for i in range(expectedOutput)] + [1]+ [0 for i in range(10 - expectedOutput - 1)]
+    print(expectedOutputProbs)
+    self.pdErrorWRTActivation = self.activations - expectedOutputProbs # Fix this to subtract a[0] from b[0], a[1] from b[1], etc..
+    # Add in pdActivationWRTWeightedSum -> ErrorWRTWeightedSum
