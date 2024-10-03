@@ -118,7 +118,18 @@ class OutputLayer(BaseLayer):
   def BackPropogate(self, expectedOutput):
     # Convert expected value to an array of 'probablities'
     # e.g '4' -> [0,0,0,0,1,0,0,0,0,0]
-    expectedOutputProbs = [0 for i in range(expectedOutput)] + [1]+ [0 for i in range(10 - expectedOutput - 1)]
+    outputSize = len(self.activations) # Size of output layer (length of list) - Should be 10
+    expectedOutputProbs = [0 for i in range(expectedOutput)] + [1]+ [0 for i in range(outputSize - expectedOutput - 1)]
     print(expectedOutputProbs)
-    self.pdErrorWRTActivation = self.activations - expectedOutputProbs # Fix this to subtract a[0] from b[0], a[1] from b[1], etc..
-    # Add in pdActivationWRTWeightedSum -> ErrorWRTWeightedSum
+
+    # 1 - Calculate dError / da_k
+    self.pdErrorWRTActivation = [expectedOutputProbs[i] - self.activations[i] for i in range(outputSize)] 
+    print(self.pdErrorWRTActivation)
+
+    # 2 - Calculate da_k / dz_k
+    self.pdActivationWRTWeightedSum = [(activation)*(1 - activation) for activation in self.activations]
+    print(self.pdActivationWRTWeightedSum)
+
+    # 3 - Calculate dError / dz_k
+    self.pdErrorWRTWeightedSum = [self.pdErrorWRTActivation[i] * self.pdActivationWRTWeightedSum[i] for i in range(outputSize)]
+    print(f"Partial rate of change of Error WRT the weighted sum at each output node : {self.pdErrorWRTWeightedSum}")

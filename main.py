@@ -61,7 +61,7 @@ class Network:
 
 def __main__():
   N = Network()
-  print(N.ForwardPropogate())
+  N.ForwardPropogate()
   N.BackPropogate()
 
 
