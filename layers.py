@@ -5,7 +5,7 @@ from numpy import asarray
 # Defines a Layer (Use HiddenLayer or OutputLayer for backprop functionality)
 class BaseLayer:
   # Data
-  backPropConstant = 0 # Placeholder (used in weight update formula)
+  backPropConstant = 1.5 # Placeholder (used in weight update formula)
 
   inputSize = 0 # no. nodes in previous layer
   layerSize = 0 # no. nodes in layer
@@ -17,6 +17,9 @@ class BaseLayer:
   pdErrorWRTActivation = []
   pdActivationWRTWeightedSum = []
   pdErrorWRTWeightedSum = []
+  pdWeightedSumWRTWeights = []
+  pdErrorWRTWeights = []
+  
 
   # Functionality
 
@@ -101,15 +104,57 @@ class BaseLayer:
     self.activations = self.__Activation__()
     return self.activations
 
-  def UpdateWeights():
-    pass
+  """
+  Updates weights of layer using update rule
+  current rule (FIX) : w_n = w_o + backpropConstant*(dError / dw_o), where backpropConstant starts at 1.5, and decreases by 0.02 every cycle until it = 0. 
+  INPUTS: Layer
+  OUPUTS: New weights for layer
+  """
+  def UpdateWeights(self):
+    for i in range(self.layerSize):
+      for j in range(self.inputSize):
+        self.weights[i][j] += self.backPropConstant*(self.pdErrorWRTWeights[i][j])
+    self.backPropConstant -= 0.02 if self.backPropConstant > 0 else 0
 
 class HiddenLayer(BaseLayer):
   def __Activation__(self):
       return self.__RELU__()
   
-  def BackPropogate(self):
-    yield NotImplementedError() # TODO!!
+  """
+  Finds error gradient of each neuron in hidden layer
+  INPUTS: Error of neurons in proceeding layer, weights of proceeding layer
+  OUTPUTS: error gradient of each neuron in layer
+  """
+  def BackPropogate(self, proceedingLayer: BaseLayer):
+
+    # 1 - Find dError / da_k
+    self.pdErrorWRTActivation = [sum([proceedingLayer.weights[i][j] * proceedingLayer.pdErrorWRTWeightedSum[i] for i in range(proceedingLayer.layerSize)]) for j in range(self.layerSize)]
+    print(self.pdErrorWRTActivation)
+
+    # 2 - Find da_k / dz_k
+    self.pdActivationWRTWeightedSum = [(activation)*(1 - activation) for activation in self.activations]
+    print(self.pdActivationWRTWeightedSum)
+
+    # 3 - Find dError / dz_k
+    self.pdErrorWRTWeightedSum = [self.pdErrorWRTActivation[i] * self.pdActivationWRTWeightedSum[i] for i in range(self.layerSize)]
+    print(self.pdErrorWRTWeightedSum)
+
+    # 4 - Find dz_k / dw_k,l
+    # Forgot how to do this : setting it to sum of all weighted sums / weights # TODO FIX!!!! (This is also going to break if any weight is == 0, but should be okay for now)
+    self.pdWeightedSumWRTWeights = [[sum(self.weightedSums) / self.weights[i][j] for j in range(self.inputSize)] for i in range(self.layerSize)]
+
+    print(f"Weighted summation WRT Weights in hidden layer : ")
+    for e in self.pdWeightedSumWRTWeights:
+      print(e, end="\n\n\n\n")
+    print("\n\n\n\n")
+
+    # 5 - Find dError / dw_k,l
+    self.pdErrorWRTWeights = [[self.pdWeightedSumWRTWeights[i][j] * self.pdErrorWRTWeightedSum[i] for j in range(self.inputSize)] for i in range(self.layerSize)]
+    
+    print(f"Error WRT Weights in hidden layer : ")
+    for e in self.pdErrorWRTWeights:
+      print(e, end="\n\n\n\n")
+
   
 class OutputLayer(BaseLayer):
   def __Activation__(self):
@@ -118,12 +163,11 @@ class OutputLayer(BaseLayer):
   def BackPropogate(self, expectedOutput):
     # Convert expected value to an array of 'probablities'
     # e.g '4' -> [0,0,0,0,1,0,0,0,0,0]
-    outputSize = len(self.activations) # Size of output layer (length of list) - Should be 10
-    expectedOutputProbs = [0 for i in range(expectedOutput)] + [1]+ [0 for i in range(outputSize - expectedOutput - 1)]
+    expectedOutputProbs = [0 for i in range(expectedOutput)] + [1]+ [0 for i in range(self.layerSize - expectedOutput - 1)]
     print(expectedOutputProbs)
 
     # 1 - Calculate dError / da_k
-    self.pdErrorWRTActivation = [expectedOutputProbs[i] - self.activations[i] for i in range(outputSize)] 
+    self.pdErrorWRTActivation = [expectedOutputProbs[i] - self.activations[i] for i in range(self.layerSize)] 
     print(self.pdErrorWRTActivation)
 
     # 2 - Calculate da_k / dz_k
@@ -131,5 +175,22 @@ class OutputLayer(BaseLayer):
     print(self.pdActivationWRTWeightedSum)
 
     # 3 - Calculate dError / dz_k
-    self.pdErrorWRTWeightedSum = [self.pdErrorWRTActivation[i] * self.pdActivationWRTWeightedSum[i] for i in range(outputSize)]
+    self.pdErrorWRTWeightedSum = [self.pdErrorWRTActivation[i] * self.pdActivationWRTWeightedSum[i] for i in range(self.layerSize)]
     print(f"Partial rate of change of Error WRT the weighted sum at each output node : {self.pdErrorWRTWeightedSum}")
+
+     # 4 - Find dz_k / dw_k,l
+    # Forgot how to do this : setting it to sum of all weighted sums / weights # TODO FIX!!!! (This is also going to break if any weight is == 0, but should be okay for now)
+    self.pdWeightedSumWRTWeights = [[sum(self.weightedSums) / self.weights[i][j] for j in range(self.inputSize)] for i in range(self.layerSize)]
+
+    print(f"Weighted summation WRT Weights in hidden layer : ")
+    for e in self.pdWeightedSumWRTWeights:
+      print(e, end="\n\n\n\n")
+    print("\n\n\n\n")
+    
+    # 5 - Find dError / dw_k,l
+    self.pdErrorWRTWeights = [[self.pdWeightedSumWRTWeights[i][j] * self.pdErrorWRTWeightedSum[i] for j in range(self.inputSize)] for i in range(self.layerSize)]
+    
+    print(f"Error WRT Weights in hidden layer : ")
+    for e in self.pdErrorWRTWeights:
+      print(e, end="\n\n\n\n")
+
